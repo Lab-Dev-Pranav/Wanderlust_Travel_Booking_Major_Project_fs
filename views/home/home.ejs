@@ -1,0 +1,141 @@
+<% layout("/layouts/boilerplate") %>
+
+<body class="HOME-BODY" style="width:100vw;">
+  
+    <div class="home-container" style="max-width: 1400px; width: 95vw;"></div>
+        <h1 class="text-center"> Wanderlust Travel Booking </h1>
+
+          
+
+        <div class="search-section" style="width:100%;">
+            <div class="search-section-img" style="width:50%;">
+                <img src="other/IMG/homeimg.jpg" alt="homeimg" style="width:100%;">
+            </div>
+            <div class="form-boxaa" style="width:50%;">
+                <h2>Friendly holiday rentals at your <br><i>Dream Location</i></h2>
+                <h2> A place to call home
+                    on your next adventure</h2>
+            
+                <!-- <p>Find <strike>and book</strike> unique & friendly homes on Wanderlust...</p> -->
+                <!-- <a class="nav-link" href="/listings">
+                    <button class="search-btn">Find Your Dream Home</button>
+                </a> -->
+
+<form action="/search" method="GET" class="mb-4 p-4 bg-light rounded shadow-sm h-100" style="box-shadow: 0 0.5rem 2rem rgba(0,0,0,.25)!important;">
+        <div class="row g-3">
+            <p class="text-center" style="color: coral;">Discover dreamy villas, houses, cabins & more</p>
+            <p class="text-center" style="color: coral; margin-top: -15px;">Find <strike>and book</strike> unique & friendly homes on Wanderlust...</p>
+
+            <div style="display: flex; justify-content: space-evenly;">
+                    <div class="col-md-6">
+                    <input type="text" name="location" class="form-control" placeholder="Location" required>
+                    </div>
+
+                    <div class="col-md-3">
+                    <input type="number" name="people" class="form-control" min="1" placeholder="No. of People" required>
+                    </div>
+            </div>
+            <div style="display: flex; justify-content: space-evenly;">
+                    <div class="col-md-4">
+                    <input type="date" name="checkIn" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                    <input type="date" name="checkOut" class="form-control" required>
+                    </div>
+            </div>
+                  
+            <div style="display: flex; justify-content: space-evenly;">        
+                    <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+            </div>
+           </div>
+    </form>
+
+
+            </div>
+        </div>
+
+
+
+
+
+<br><br><br><br><br><br><br><br>
+
+        <div class="home-intro">
+            <h2>Welcome to Wanderlust</h2>
+            <h2>Explore the world with Wanderlust</h2>
+            <p>Discover unique stays and experiences around the world.</p>
+            <p>From cozy cabins to luxurious villas, we have something for everyone.</p>
+            <p>Book your next adventure with us and create unforgettable memories.</p>
+            <p>Join our community of travelers and hosts, and experience the world like never before.</p>
+            <p>Whether you're looking for a weekend getaway or a long-term stay, we have the perfect place for you.</p>
+            <p>Explore our listings and find your dream home away from home.</p>
+            <p>Start your journey with Wanderlust today!</p>
+            <p>Happy travels!</p>
+        </div>
+        
+        <% if (currUser) { %>
+            <div class="home-owner-search home-intro">
+                <h2>Looking for a place to stay at a friendly host? <br>Book with confidence at your trusted host</h2>
+                <a class="nav-link" href="/user">
+                    <button  class="search-btn">Find Your host</button>
+                </a>
+            </div>
+        <% } %>
+
+        <div class="categories">
+            <h3>Holiday rentals for every style</h3>
+            <div class="categories-container">
+                <div class="category">🏡<br> Cabins</div>
+                <div class="category">🏢<br>  Flats</div>
+                <div class="category">🏠<br>  Houses</div>
+                <div class="category">🏖 <br> Beachfront</div>
+                <div class="category">🌲<br>  Treehouses</div>
+                <div class="category">🏕 <br>  Camping</div>
+                <div class="category">🚐 <br>  RVs</div>
+                <div class="category">🏛 <br>  Historic Homes</div>
+            </div>
+        </div>
+
+        <div class="amenities">
+            <h3>Popular amenities for friendly home rentals</h3>
+            <div class="amenities-container">
+                <div class="amenity">🍽 <br> Kitchen</div>
+                <div class="amenity">📶 <br> Wifi</div>
+                <div class="amenity">🏊 <br> Pool</div>
+                <div class="amenity">🅿 <br> Free parking on premises</div>
+                <div class="amenity">❄ <br> Air conditioning</div>
+                <div class="amenity">🔥 <br> Fireplace</div>
+                <div class="amenity">🛁 <br> Hot tub</div>
+                <div class="amenity">🐕 <br> Pet-friendly</div>
+                <div class="amenity">🧺 <br> Laundry</div>
+            </div>
+        </div>
+
+        <div class="experiences">
+            <h3>Unique Experiences</h3>
+            <div class="experiences-container">
+                <div class="experience">⛰ <br> Mountain Hiking</div>
+                <div class="experience">🚴 <br> Biking Trails</div>
+                <div class="experience">🛶 <br> Kayaking Adventures</div>
+                <div class="experience">🐾 <br> Pet-friendly Parks</div>
+            </div>
+        </div>
+
+        <div class="local-attractions">
+            <h3>Top Attractions</h3>
+            <div class="local-attractions-container">
+                <div class="attraction">🏔 <br> Banff National Park</div>
+                <div class="attraction">🦌 <br> Wildlife Viewing</div>
+                <div class="attraction">🏞 <br> Scenic Lookouts</div>
+                <div class="attraction">🎨 <br> Art Galleries</div>
+            </div>
+        </div>
+        <br><br><br><br>    
+    </div>
+  
+</body>
+
+

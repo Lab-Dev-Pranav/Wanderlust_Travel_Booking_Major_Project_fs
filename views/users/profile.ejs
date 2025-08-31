@@ -1,0 +1,361 @@
+<% layout("/layouts/boilerplate") %>
+
+  <body>
+
+
+    <div class="container py-5">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <!-- Left Section: Profile Image + Upload -->
+            <div class="col-md-4 text-center">
+              <% if (curr_user.profilePhoto && curr_user.profilePhoto.url) { %>
+                <img src="<%= curr_user.profilePhoto.url %>" alt="Profile Photo"
+                  class="img-thumbnail rounded-circle mb-3" style="width: 160px; height: 160px; object-fit: cover;">
+                <% } else { %>
+                  <div
+                    class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mb-3"
+                    style="width: 160px; height: 160px;">
+                    <i class="bi bi-person-circle" style="font-size: 4rem;"></i>
+                  </div>
+                  <% } %>
+
+                    <form action="/profile/photo" method="POST" enctype="multipart/form-data">
+                      <div class="mb-3">
+                        <input type="file" name="profilePhoto" accept="image/*" class="form-control">
+                      </div>
+                      <button type="submit" class="btn btn-outline-primary btn-sm w-100">Upload</button>
+                    </form>
+            </div>
+
+            <!-- Right Section: User Info -->
+            <div class="col-md-8">
+              <h4 class="text-primary">@<%= curr_user.username %>
+              </h4>
+              <p class="mb-2"><i class="bi bi-envelope-fill me-2"></i><strong>
+                  <%= curr_user.email %>
+                </strong></p>
+              <p class="mb-0">
+                <i class="bi bi-lock-fill me-2"></i>
+                <strong>
+                  <% for(let index=0; index < curr_user.username.length; index++) { %>*<% } %>
+                </strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="mt-4">
+        <h5 class="text-secondary my-4">Bookings Made by @<%= curr_user.username %> – <%= curuserbookings.length %>
+        </h5>
+
+        <div class="row">
+          <% if (curuserbookings.length===0) { %>
+            <div class="col-12">
+              <div class="alert alert-warning text-center">
+                No bookings made yet by @<%= curr_user.username %>
+              </div>
+            </div>
+            <% } else { %>
+              <% for (let BOOKING of curuserbookings) { const checkInDate=new Date(BOOKING.checkIn); const
+                checkOutDate=new Date(BOOKING.checkOut); const totalDays=Math.ceil((checkOutDate - checkInDate) / (1000
+                * 60 * 60 * 24)); const totalPrice=totalDays * BOOKING.listing.price; %>
+                <div class="col-md-6 col-lg-4 mb-4">
+                  <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="<%= BOOKING.listing.image.url %>" class="card-img-top object-fit-cover"
+                      alt="Listing Image" style="height: 220px;">
+                    <div class="card-body">
+
+     
+
+                      <h5 class="card-title fw-bold">
+                        <%= BOOKING.listing.title %> - <%= BOOKING.listing.tag %>
+                      </h5>
+                      <p class="text-muted mb-1"><i class="bi bi-geo-alt-fill"></i>
+                        <%= BOOKING.listing.location %>, <%= BOOKING.listing.country %>
+                      </p>
+
+                      <p class="mb-1"><i class="bi bi-geo-alt-fill"></i>
+                        <small>Exact Location:</small>
+                        <a href="<%= BOOKING.listing.exactLocation %>" target="_blank">View on Map</a>
+                      </p>
+
+                      <h6 class="text-muted mb-1">
+                        <small>Property Owner : <%= BOOKING.listing.owner.email %></small>
+                      </h6>
+                      <hr>
+
+                      <p class="mb-1"><strong>Capacity:</strong>
+                        <%= BOOKING.listing.capacity %> | <strong>Guests:</strong>
+                          <%= BOOKING.people %>
+                      </p>
+                      <p class="mb-1"><strong>Check-in:</strong>
+                        <%= checkInDate.toDateString() %> at 11:00am
+                      </p>
+                      <p class="mb-1"><strong>Check-out:</strong>
+                        <%= checkOutDate.toDateString() %> at 01:00pm
+                      </p>
+                      <p class="mb-1"><strong>Total Days:</strong>
+                        <%= totalDays %>
+                      </p>
+
+                      <% if (BOOKING.status=="pending" ) { %>
+                        <p class="mb-1"
+                          style="background-color: rgb(62, 62, 255); width: fit-content; padding: 3px; border-radius: 10px; color: whitesmoke;">
+                          <strong>Status:</strong>
+                          <%= BOOKING.status %>
+                        </p>
+                        <% } %>
+
+                          <% if (BOOKING.status=="confirmed" ) { %>
+                            <p class="mb-1"
+                              style="background-color: rgb(51, 255, 102); width: fit-content; padding: 3px; border-radius: 10px; color: whitesmoke;">
+                              <strong>Status:</strong>
+                              <%= BOOKING.status %>
+                            </p>
+                            <% } %>
+
+
+
+
+                              <div class="p-3 my-3 bg-white rounded shadow-sm border">
+                                <p class="mb-2">
+                                  <strong>Booking date:</strong>
+                                  <%= new Date(BOOKING.createdAt).toLocaleDateString("en-IN", { year: "numeric" ,
+                                    month: "long" , day: "numeric" }) %>
+                                </p>
+
+                                <% if (BOOKING.expiresAt ) { %>
+                                  <p class="mb-0">
+                                    <strong>Expire date:</strong>
+                                    <span class="booking-expiry-timer"
+                                      data-expiry="<%= BOOKING.expiresAt.toISOString() %>">
+
+                                      <%= new Date(BOOKING.expiresAt).toLocaleString("en-IN", { year: "numeric" ,
+                                        month: "long" , day: "numeric" , hour: "2-digit" , minute: "2-digit" ,
+                                        second: "2-digit" }) %>
+                                    </span>
+                                    <span class="tooltip-ibtn">
+                                      <i class="bi bi-info-circle-fill ibtn"></i>
+                                      <span class="tooltip-text">
+                                        This is the expiry date and time for your booking. If you do not pay before
+                                        this, your booking will be auto-cancelled.
+                                      </span>
+                                    </span>
+                                  </p>
+                                  <% } %>
+
+                              </div>
+
+                          <%
+                            const gstAmount = totalPrice * 0.18;
+                            const platformFee = totalPrice * 0.02;
+                            const grandTotal = totalPrice + gstAmount + platformFee;
+                          %>
+
+                          <p class="mb-1 text-success">
+                            <strong>Total Price:</strong> ₹<%= totalPrice.toLocaleString("en-IN") %> <small>(base)</small><br>
+                            <small class="text-muted">+ 18% GST: ₹<%= gstAmount.toFixed(2) %></small><br>
+                            <small class="text-muted">+ 2% Platform Fee: ₹<%= platformFee.toFixed(2) %></small><br>
+                            <strong>Grand Total: ₹<%= grandTotal.toFixed(2).toLocaleString("en-IN") %></strong>
+                          </p>
+
+
+                              <div class="mt-4" style="width: 100%; border: 1px solid rgba(255, 0, 0, 0);">
+                                <% if (BOOKING.status=="pending" ) { %>
+                                  <form action="/payments/<%= BOOKING._id %>" method="get" class="d-inline">
+                                   
+                                    <button type="submit" class="btn btn-primary">
+                                      Pay to Confirm
+                                    </button>
+                                  </form>
+
+                                  <form action="/bookings/<%= BOOKING._id %>?_method=DELETE" method="POST"
+                                    class="d-inline">
+                                    <button type="submit" class="btn btn-danger">
+                                      Cancel Booking
+                                    </button>
+                                  </form>
+                                  <% } %>
+
+                                    <% if (BOOKING.status=="confirmed" ) { %>
+                                      <span class="badge bg-success blinking-badge">Booking Confirmed</span>
+                                      <form action="/payments/<%= BOOKING._id %>/makeunpay" method="get"
+                                        class="d-inline">
+                                        <button type="submit" class="btn btn-primary">
+                                          make as unpaid
+                                        </button>
+                                      </form>
+                                      <% } %>
+                              </div>
+
+                              <style>
+                                .blinking-badge {
+                                  animation: blinking 1s infinite ease-out;
+                                }
+
+                                @keyframes blinking {
+                                  0% {
+                                    opacity: 1;
+                                  }
+
+                                  50% {
+                                    opacity: 0.3;
+                                  }
+
+                                  100% {
+                                    opacity: 1;
+                                  }
+                                }
+
+                                .tooltip-ibtn {
+                                  position: relative;
+                                  display: inline-block;
+                                  cursor: pointer;
+                                }
+
+                                .tooltip-ibtn .tooltip-text {
+                                  visibility: hidden;
+                                  width: 220px;
+                                  background-color: #222;
+                                  color: #fff;
+                                  text-align: left;
+                                  border-radius: 6px;
+                                  padding: 8px 10px;
+                                  position: absolute;
+                                  z-index: 10;
+                                  bottom: 125%;
+                                  /* Position above the icon */
+                                  left: 50%;
+                                  transform: translateX(-50%);
+                                  opacity: 0;
+                                  transition: opacity 0.2s;
+                                  font-size: 0.95em;
+                                }
+
+                                .tooltip-ibtn:hover .tooltip-text {
+                                  visibility: visible;
+                                  opacity: 1;
+                                }
+                              </style>
+
+
+
+                    </div>
+                  </div>
+                </div>
+                <% } %>
+                  <% } %>
+        </div>
+
+
+        <div class="mt-5">
+          <h5 class="mb-3 text-success">Your booked locations will be shown here
+          </h5>
+          <form action="/bookingonmylocation" method="GET">
+            <button class="btn btn-primary">
+              View Bookings
+            </button>
+          </form>
+
+        </div>
+
+
+
+
+        <div class="mt-5">
+          <% if (curuserlistings.length !==0) { %>
+            <h5 class="mb-3 text-success">Locations Owned by @<%= curr_user.username %> - <%= curuserlistings.length %>
+            </h5>
+            <% } else { %>
+              <h5 class="mb-2 text-danger">No locations owned yet by @<%= curr_user.username %>
+              </h5>
+              <a href="/listings/new" class="btn btn-info">Add New Location</a>
+              <% } %>
+        </div>
+
+        <div class="row mt-3">
+          <% for (let LISTING of curuserlistings) { %>
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 shadow-sm">
+                <img src="<%= LISTING.image.url %>" class="card-img-top" alt="Listing Image">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <%= LISTING.title %>
+                  </h5>
+                  <p class="card-text text-muted">
+                    <%= LISTING.tag %>
+                  </p>
+                  <a href="/listings/<%= LISTING.id %>" class="btn btn-outline-primary btn-sm">More Info</a>
+                </div>
+              </div>
+            </div>
+            <% } %>
+        </div>
+
+
+
+
+
+        <p></p>
+
+
+
+
+
+
+      </div>
+
+  </body>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .container {
+      background-color: #f9f9f9;
+      border-radius: 15px;
+    }
+  </style>
+
+
+
+
+  <script src="/js/Profile.js"></script>
+  <script>
+    function updateExpiryTimers() {
+      const timers = document.querySelectorAll('.booking-expiry-timer');
+      timers.forEach(function (timer) {
+        const expiry = new Date(timer.dataset.expiry);
+        const now = new Date();
+        let diff = expiry - now;
+
+        if (diff <= 0) {
+          timer.textContent = "Expired";
+          timer.style.color = "red";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        diff -= days * (1000 * 60 * 60 * 24);
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        diff -= hours * (1000 * 60 * 60);
+        const minutes = Math.floor(diff / (1000 * 60));
+        diff -= minutes * (1000 * 60);
+        const seconds = Math.floor(diff / 1000);
+
+        let parts = [];
+        if (days > 0) parts.push(days + "d");
+        parts.push(
+          String(hours).padStart(2, '0') + "h",
+          String(minutes).padStart(2, '0') + "m",
+          String(seconds).padStart(2, '0') + "s"
+        );
+        timer.textContent = parts.join(" ");
+        timer.style.color = "#ff6600";
+      });
+    }
+    setInterval(updateExpiryTimers, 1000);
+    updateExpiryTimers();
+  </script>

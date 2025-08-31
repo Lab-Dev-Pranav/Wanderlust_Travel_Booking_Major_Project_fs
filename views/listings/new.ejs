@@ -1,0 +1,79 @@
+<% layout("/layouts/boilerplate") %>
+<body class="new-listing">
+
+    <div class="container">
+        <h1 class="n-f-h1">Add a New Location</h1>
+        <form action="/listings" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" name="listing[title]" id="title" required>
+                <div class="invalid-feedback">Please provide a title.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" name="listing[description]" id="description" required></textarea>
+                <div class="invalid-feedback">Please provide a description.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input class="form-control" name="listing[price]" id="price" required>
+                <div class="invalid-feedback">Please provide a valid price.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" class="form-control" name="listing[location]" id="location" required>
+                <div class="invalid-feedback">Please provide a location.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="country" class="form-label">Country</label>
+                <input type="text" class="form-control" name="listing[country]" id="country" required>
+                <div class="invalid-feedback">Please provide a country...</div>
+            </div>
+
+            <!-- //exace lication url -->
+            <div class="mb-3">
+                <label for="exactLocation" class="form-label">Exact Location URL</label>
+                <input type="text" class="form-control" name="listing[exactLocation]" id="exactLocation" required>
+                <div class="invalid-feedback">Please provide an exact location URL.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="country" class="form-label">Tag</label>
+                <select name="listing[tag]" class="form-select" aria-label="Default select example">
+                    <!-- <option selected>Select an option</option> -->
+                    <option selected value="Trending">Trending</option>
+                    <option value="Rooms">Rooms</option>
+                    <option value="Iconic">Iconic</option>
+                    <option value="Mountain">Mountain</option>
+                    <option value="Castles">Castles</option>
+                    <option value="Pools">Pools</option>
+                    <option value="Camping">Camping</option>
+                    <option value="Farms">Farms</option>
+                    <option value="Hot">Hot</option>
+                    <option value="Domes">Domes</option>
+                  </select>
+                <div class="invalid-feedback">Please provide a tag...</div>
+            </div>
+
+             <div class="mb-3">
+                <label for="capacity" class="form-label">Capacity</label>
+                <input type="number" class="form-control" name="listing[capacity]" id="capacity" min="1" required>
+                <div class="invalid-feedback">Please provide a valid capacity.</div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="image" class="form-label">Uplode Image</label>
+                <input type="file" class="form-control" name="listing[image][url]" id="image">
+                <div class="invalid-feedback">Please provide a valid URL.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add New</button>
+        </form>
+        <br><br><br>
+    </div>
+   
+</body>

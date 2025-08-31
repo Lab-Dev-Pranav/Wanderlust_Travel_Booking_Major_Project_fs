@@ -1,0 +1,291 @@
+<% layout("/layouts/boilerplate") %>
+
+<body>
+  <div class="container">
+
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1>Bookings on My Location #Admin</h1>
+        <p>
+          Here you can view all bookings made on your listings –
+          <span id="live-date"></span>
+          <span id="live-time"></span>
+        </p>
+    </div>
+    <!-- From Uiverse.io by satyamchaudharydev --> 
+     <a href="/getmypayments/<%= curr_user.email %>" class="text-decoration-none">
+          <button >
+            <p>Payments</p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              ></path>
+            </svg>
+          </button>
+     </a>
+        
+  </div>
+   
+
+    <div class="mt-4">
+      <h5 class="text-secondary my-4">
+        Bookings Made on Your Locations – <%= surusbk.length %>
+       
+      </h5>
+
+      <div class="row">
+        <% if (surusbk.length === 0) { %>
+          <div class="col-12">
+            <div class="alert alert-warning text-center">
+              No bookings found for your listings.
+            </div>
+          </div>
+        <% } else { %>
+          <% for (let BOOKING of surusbk) { 
+              const checkInDate = new Date(BOOKING.checkIn); 
+              const checkOutDate = new Date(BOOKING.checkOut); 
+              const totalDays = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+              const totalPrice = totalDays * BOOKING.listing.price;
+              const gstAmount = totalPrice * 0.18;
+              const platformFee = totalPrice * 0.02;
+              const grandTotal = totalPrice + gstAmount + platformFee;
+          %>
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <img 
+                  src="<%= BOOKING.listing.image.url %>" 
+                  class="card-img-top object-fit-cover booking-image"
+                  alt="<%= BOOKING.listing.title %>">
+
+                <div class="card-body">
+                  <p class="text-muted mb-1">
+                    <i class="bi bi-hash"></i> Booking ID: <%= BOOKING._id %>
+                  </p>
+
+                  <h5 class="card-title fw-bold">
+                    <%= BOOKING.listing.title %> - <%= BOOKING.listing.tag %>
+                  </h5>
+
+                  <p class="text-muted mb-1">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <%= BOOKING.listing.location %>, <%= BOOKING.listing.country %>
+                  </p>
+
+                  <p class="mb-1">
+                    <strong>Exact Location:</strong>
+                    <a href="<%= BOOKING.listing.exactLocation %>" target="_blank">View on Map</a>
+                  </p>
+
+                  <p class="mb-1">
+                    <strong>Capacity:</strong> <%= BOOKING.listing.capacity %> | 
+                    <strong>Guests:</strong> <%= BOOKING.people %>
+                  </p>
+
+                  <p class="mb-1">
+                    <strong>Booked by:</strong>
+                    <%= BOOKING.user.username %> (<%= BOOKING.user.email %>)
+                  </p>
+
+                  <p class="mb-1">
+                    <strong>Check-in:</strong><br>
+                    <%= checkInDate.toDateString() %> at 11:00am
+                  </p>
+
+                  <p class="mb-1">
+                    <strong>Check-out:</strong><br>
+                    <%= checkOutDate.toDateString() %> at 01:00pm
+                  </p>
+
+                  <p class="mb-1"><strong>Total Days:</strong> <%= totalDays %></p>
+
+                  <p class="mb-1">
+                    <strong>Status:</strong>
+                    <span
+                      class="badge <%= BOOKING.status === 'confirmed' ? 'bg-success' : (BOOKING.status === 'pending' ? 'bg-primary' : 'bg-secondary') %>">
+                      <%= BOOKING.status.charAt(0).toUpperCase() + BOOKING.status.slice(1) %>
+                    </span>
+                  </p>
+
+                  <div class="p-3 my-3 bg-white rounded shadow-sm border">
+                    <p class="mb-2">
+                      <strong>Booking date:</strong>
+                      <%= new Date(BOOKING.createdAt).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" }) %>
+                    </p>
+
+                    <% if (BOOKING.expiresAt) { %>
+                      <p class="mb-0">
+                        <strong>Expires at:</strong><br>
+                        <span class="text-muted">
+                          <%= new Date(BOOKING.expiresAt).toLocaleString("en-IN", { 
+                                year: "numeric", month: "long", day: "numeric" 
+                                /* hour: "2-digit", minute: "2-digit", second: "2-digit" */ 
+                            }) %>
+                          <span class="booking-expiry-timer"
+                                data-expiry="<%= new Date(BOOKING.expiresAt).toISOString() %>">--:--:--</span>
+                        </span>
+                      </p>
+                    <% } %>
+                  </div>
+
+                  <p class="mb-1 text-success">
+                    <strong>Total Price:</strong> ₹<%= totalPrice.toLocaleString("en-IN") %> <small>(base)</small><br>
+                    <small class="text-muted">+ 18% GST: ₹<%= gstAmount.toFixed(2).toLocaleString("en-IN") %></small><br>
+                    <small class="text-muted">+ 2% Platform Fee: ₹<%= platformFee.toFixed(2).toLocaleString("en-IN") %></small><br>
+                    <strong>Grand Total: ₹<%= grandTotal.toFixed(2).toLocaleString("en-IN") %></strong>
+                  </p>
+
+                </div>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+
+      document.getElementById('live-date').textContent = now.toLocaleDateString('en-IN', dateOptions) + ' ';
+      document.getElementById('live-time').textContent = now.toLocaleTimeString('en-IN', timeOptions);
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    function startExpiryCountdown() {
+      const timers = document.querySelectorAll('.booking-expiry-timer');
+
+      timers.forEach(timer => {
+        const expiryTime = new Date(timer.dataset.expiry).getTime();
+
+        function updateTimer() {
+          const now = Date.now();
+          const distance = expiryTime - now;
+
+          if (distance <= 0) {
+            timer.textContent = "Expired";
+            return;
+          }
+
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          let output = '';
+          if (days > 0) output += `${days}d `;
+          output += `${hours.toString().padStart(2, '0')}h : `;
+          output += `${minutes.toString().padStart(2, '0')}m : `;
+          output += `${seconds.toString().padStart(2, '0')}s`;
+
+          timer.textContent = output;
+        }
+
+        updateTimer();
+        const intervalId = setInterval(() => {
+          updateTimer();
+          if (Date.now() >= expiryTime) clearInterval(intervalId);
+        }, 1000);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", startExpiryCountdown);
+  </script>
+
+  <style>
+    .booking-image {
+      height: 220px;
+      object-fit: cover;
+    }
+
+
+
+
+    /* From Uiverse.io by satyamchaudharydev */ 
+button {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+button {
+  --primary-color: #111;
+  --hovered-color: #c84747;
+  position: relative;
+  display: flex;
+  font-weight: 600;
+  font-size: 20px;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+button p {
+  margin: 0;
+  position: relative;
+  font-size: 20px;
+  color: var(--primary-color);
+}
+
+button::after {
+  position: absolute;
+  content: "";
+  width: 0;
+  left: 0;
+  bottom: -7px;
+  background: var(--hovered-color);
+  height: 2px;
+  transition: 0.3s ease-out;
+}
+
+button p::before {
+  position: absolute;
+  /*   box-sizing: border-box; */
+  content: "Payments";
+  width: 0%;
+  inset: 0;
+  color: var(--hovered-color);
+  overflow: hidden;
+  transition: 0.3s ease-out;
+}
+
+button:hover::after {
+  width: 100%;
+}
+
+button:hover p::before {
+  width: 100%;
+}
+
+button:hover svg {
+  transform: translateX(4px);
+  color: var(--hovered-color);
+}
+
+button svg {
+  color: var(--primary-color);
+  transition: 0.2s;
+  position: relative;
+  width: 15px;
+  transition-delay: 0.2s;
+}
+
+
+
+
+
+  </style>
+</body>
