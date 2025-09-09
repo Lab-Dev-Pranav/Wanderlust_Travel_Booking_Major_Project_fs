@@ -1,4 +1,4 @@
-# 🏡 MAJOR-PRO Event & Property Booking Platform
+# 🏡 MAJOR-PRO - Wanderlust Staycation Booking Platform
 
 A modern solution for property/event bookings, user management, and seamless payment workflows.
 
